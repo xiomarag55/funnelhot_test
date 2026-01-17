@@ -1,24 +1,21 @@
-import { mockApi } from "./mockApi";
+import { mockApi } from "@/services/mockApi";
 import { MOCK_ASSISTANTS } from "@/utils/constants";
 
-// Mock Math.random para controlar errores simulados
-const mockMathRandom = jest.spyOn(Math, "random");
+// Mock global Math.random para controlar errores simulados
+const originalMathRandom = Math.random;
 
 describe("mockApi", () => {
   beforeEach(() => {
-    mockMathRandom.mockClear();
-    // Reset assistants array
-    mockApi.getAssistants().then((data) => {
-      // Clear and reinitialize with mock data
-      data.forEach(async (assistant) => {
-        await mockApi.deleteAssistant(assistant.id);
-      });
-    });
+    Math.random = jest.fn(() => 0.5);
+  });
 
-    // Re-add mock assistants
-    MOCK_ASSISTANTS.forEach(async (assistant) => {
-      await mockApi.createAssistant(assistant);
-    });
+  afterEach(() => {
+    // Restaurar Math.random original
+    Math.random = originalMathRandom;
+  });
+
+  afterAll(() => {
+    Math.random = originalMathRandom;
   });
 
   describe("getAssistants", () => {
@@ -59,6 +56,9 @@ describe("mockApi", () => {
 
   describe("createAssistant", () => {
     test("creates new assistant with generated id", async () => {
+      // Configurar Math.random para que no falle
+      Math.random = jest.fn(() => 0.5);
+
       const newAssistant = {
         name: "New Assistant",
         language: "Español" as const,
@@ -75,23 +75,8 @@ describe("mockApi", () => {
     });
 
     test("simulates error with 10% probability", async () => {
-      mockMathRandom.mockReturnValue(0.05); // 5% - below threshold for error
-
-      const newAssistant = {
-        name: "Test Assistant",
-        language: "Español" as const,
-        tone: "Formal" as const,
-        responseLength: { short: 25, medium: 50, long: 25 },
-        audioEnabled: false,
-      };
-
-      await expect(
-        mockApi.createAssistant(newAssistant),
-      ).resolves.not.toThrow();
-    });
-
-    test("throws error when simulated", async () => {
-      mockMathRandom.mockReturnValue(0.09); // 9% - triggers error
+      // Configurar Math.random para que falle (valor < 0.1)
+      Math.random = jest.fn(() => 0.05);
 
       const newAssistant = {
         name: "Test Assistant",
@@ -109,8 +94,21 @@ describe("mockApi", () => {
 
   describe("updateAssistant", () => {
     test("updates existing assistant", async () => {
-      const assistants = await mockApi.getAssistants();
-      const firstId = assistants[0].id;
+      // Primero crear un asistente
+      Math.random = jest.fn(() => 0.5);
+
+      const newAssistant = {
+        name: "Test Assistant",
+        language: "Español" as const,
+        tone: "Formal" as const,
+        responseLength: { short: 25, medium: 50, long: 25 },
+        audioEnabled: false,
+      };
+
+      const created = await mockApi.createAssistant(newAssistant);
+
+      // Ahora actualizarlo
+      Math.random = jest.fn(() => 0.5); // Asegurar que no falle
 
       const updates = {
         name: "Updated Name",
@@ -120,7 +118,7 @@ describe("mockApi", () => {
         audioEnabled: true,
       };
 
-      const updated = await mockApi.updateAssistant(firstId, updates);
+      const updated = await mockApi.updateAssistant(created.id, updates);
 
       expect(updated.name).toBe("Updated Name");
       expect(updated.language).toBe("Inglés");
@@ -128,6 +126,8 @@ describe("mockApi", () => {
     });
 
     test("throws error when assistant not found", async () => {
+      Math.random = jest.fn(() => 0.5); // Asegurar que no falle por random
+
       const updates = {
         name: "Updated Name",
         language: "Inglés" as const,
@@ -140,43 +140,113 @@ describe("mockApi", () => {
         mockApi.updateAssistant("non-existent-id", updates),
       ).rejects.toThrow("Asistente no encontrado");
     });
+
+    test("simulates error with 10% probability", async () => {
+      // Crear asistente primero
+      Math.random = jest.fn(() => 0.5);
+
+      const newAssistant = {
+        name: "Test Assistant",
+        language: "Español" as const,
+        tone: "Formal" as const,
+        responseLength: { short: 25, medium: 50, long: 25 },
+        audioEnabled: false,
+      };
+
+      const created = await mockApi.createAssistant(newAssistant);
+
+      // Configurar para que falle
+      Math.random = jest.fn(() => 0.05);
+
+      const updates = {
+        name: "Updated Name",
+        language: "Inglés" as const,
+        tone: "Casual" as const,
+        responseLength: { short: 10, medium: 60, long: 30 },
+        audioEnabled: true,
+      };
+
+      await expect(
+        mockApi.updateAssistant(created.id, updates),
+      ).rejects.toThrow("Error simulado al actualizar asistente");
+    });
   });
 
   describe("deleteAssistant", () => {
     test("deletes existing assistant", async () => {
-      const assistants = await mockApi.getAssistants();
-      const initialCount = assistants.length;
-      const firstId = assistants[0].id;
+      // Crear asistente primero
+      Math.random = jest.fn(() => 0.5);
 
-      await mockApi.deleteAssistant(firstId);
+      const newAssistant = {
+        name: "Test Assistant",
+        language: "Español" as const,
+        tone: "Formal" as const,
+        responseLength: { short: 25, medium: 50, long: 25 },
+        audioEnabled: false,
+      };
+
+      const created = await mockApi.createAssistant(newAssistant);
+
+      const initialAssistants = await mockApi.getAssistants();
+      const initialCount = initialAssistants.length;
+
+      // Asegurar que no falle
+      Math.random = jest.fn(() => 0.5);
+
+      await mockApi.deleteAssistant(created.id);
 
       const newAssistants = await mockApi.getAssistants();
-      expect(newAssistants).toHaveLength(initialCount - 1);
-      expect(newAssistants.find((a) => a.id === firstId)).toBeUndefined();
+      expect(newAssistants.length).toBe(initialCount - 1);
+      expect(newAssistants.find((a) => a.id === created.id)).toBeUndefined();
     });
 
     test("simulates error with 10% probability", async () => {
-      const assistants = await mockApi.getAssistants();
-      const firstId = assistants[0].id;
+      // Crear asistente primero
+      Math.random = jest.fn(() => 0.5);
 
-      mockMathRandom.mockReturnValue(0.11); // 11% - above threshold, no error
+      const newAssistant = {
+        name: "Test Assistant",
+        language: "Español" as const,
+        tone: "Formal" as const,
+        responseLength: { short: 25, medium: 50, long: 25 },
+        audioEnabled: false,
+      };
 
-      await expect(mockApi.deleteAssistant(firstId)).resolves.not.toThrow();
+      const created = await mockApi.createAssistant(newAssistant);
+
+      // Configurar para que falle
+      Math.random = jest.fn(() => 0.05);
+
+      await expect(mockApi.deleteAssistant(created.id)).rejects.toThrow(
+        "Error simulado al eliminar asistente",
+      );
     });
   });
 
   describe("updateAssistantRules", () => {
     test("updates assistant rules", async () => {
-      const assistants = await mockApi.getAssistants();
-      const firstId = assistants[0].id;
+      // Crear asistente primero
+      Math.random = jest.fn(() => 0.5);
+
+      const newAssistant = {
+        name: "Test Assistant",
+        language: "Español" as const,
+        tone: "Formal" as const,
+        responseLength: { short: 25, medium: 50, long: 25 },
+        audioEnabled: false,
+      };
+
+      const created = await mockApi.createAssistant(newAssistant);
       const newRules = "New training rules for the assistant";
 
-      const updated = await mockApi.updateAssistantRules(firstId, newRules);
+      const updated = await mockApi.updateAssistantRules(created.id, newRules);
 
       expect(updated.rules).toBe(newRules);
     });
 
     test("throws error when assistant not found", async () => {
+      Math.random = jest.fn(() => 0.5);
+
       await expect(
         mockApi.updateAssistantRules("non-existent-id", "rules"),
       ).rejects.toThrow("Asistente no encontrado");

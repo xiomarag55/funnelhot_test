@@ -7,9 +7,11 @@
 2. Instalar dependencias
    npm install
 
-3. Ejecutar
+3. Ejecutar en desarrollo
 
 npm run dev
+
+npm test -- ejecutar los test
 
 4. Abrir en el navegador
 
@@ -36,7 +38,15 @@ Mejor performance validación eficiente y fácil integración con TypeScript
 5. Estilos: Tailwind CSS
    Desarrollo rápido, consistencia visual y fácil mantenimiento
 
-6. Arquitectura de Componentes
+6. Testing: Jest y Testing Library
+
+   Jest: Framework de testing completo y rápido
+
+   React Testing Library: Enfoque en testing de comportamientos de usuario
+
+   Cobertura: Tests para componentes críticos, hooks y servicios
+
+7. Arquitectura de Componentes
 
 Separación clara por responsabilidades y fácil escalabilidad
 
@@ -92,6 +102,11 @@ Paso 2: Configuración de respuestas
 - Botón para reiniciar conversación
 
 ## Si tuviste que priorizar, qué dejaste fuera y por qué
+
+1.  Testing de rendimiento
+    Se priorizaron los test funcionales
+2.  Un diseño visual más elaborado
+    Por falta de tiempo
 
 ## Tiempo aproximado de dedicación
 

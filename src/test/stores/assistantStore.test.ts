@@ -1,5 +1,5 @@
 import { act } from "@testing-library/react";
-import { useAssistantStore } from "./assistantStore";
+import { useAssistantStore } from "../../stores/assistantStore";
 import { Assistant } from "@/types/assistant";
 
 const mockAssistant: Assistant = {

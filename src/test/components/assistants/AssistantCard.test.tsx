@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { AssistantCard } from "../AssistantCard";
+import { AssistantCard } from "../../../components/assistants/AssistantCard";
 import { Assistant } from "@/types/assistant";
 
 const mockAssistant: Assistant = {
