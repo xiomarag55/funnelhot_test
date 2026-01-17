@@ -57,7 +57,7 @@ export default function RootLayout({
             <footer className="bg-white border-t border-gray-200 mt-12">
               <div className="container mx-auto px-4 py-6">
                 <p className="text-center text-sm text-gray-500">
-                  © 2024 Assistant Manager. Todos los derechos reservados.
+                  © 2026 Assistant Manager. Todos los derechos reservados.
                 </p>
               </div>
             </footer>
