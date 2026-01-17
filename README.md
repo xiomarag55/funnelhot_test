@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Instrucciones para correr el proyecto
 
-## Getting Started
+1. Clonar el repositorio
+   git clone https://github.com/xiomarag55/funnelhot_test.git
+   cd funnelhot_test
 
-First, run the development server:
+2. Instalar dependencias
+   npm install
 
-```bash
+3. Ejecutar
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Abrir en el navegador
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Decisiones técnicas
 
-## Learn More
+1. Next.js 14 con App Router
+   Mejor performance, soporte para React Server Components, y estructura de archivos más intuitiva
 
-To learn more about Next.js, take a look at the following resources:
+2. TypeScript
+   Mayor seguridad de tipos, mejor autocompletado y detección temprana de errores
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Gestión de Estado: Zustand y React Query
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Zustand: Para estado global de UI
 
-## Deploy on Vercel
+React Query: Para operaciones asíncronas y cache de datos del servidor
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. Formularios: React Hook Form
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Mejor performance validación eficiente y fácil integración con TypeScript
+
+5. Estilos: Tailwind CSS
+   Desarrollo rápido, consistencia visual y fácil mantenimiento
+
+6. Arquitectura de Componentes
+
+Separación clara por responsabilidades y fácil escalabilidad
+
+## Características implementadas
+
+1. Página Principal (Listado de Asistentes)
+
+- Tarjetas responsivas para cada asistente
+
+- Información completa: nombre, idioma, tono, configuración de respuestas
+
+- Acciones por tarjeta: Editar, Eliminar, Entrenar
+
+- Botón "Crear Asistente" que abre modal
+
+- Estado vacío cuando no hay asistentes
+
+- Estados de carga durante operaciones
+
+2. Modal de Creación/Edición (2 pasos)
+   Paso 1: Datos básicos
+
+- Nombre (requerido, mínimo 3 caracteres)
+
+- Idioma (select con Español, Inglés, Portugués)
+
+- Tono (select con Formal, Casual, Profesional, Amigable)
+
+Paso 2: Configuración de respuestas
+
+- Porcentajes de longitud (Cortas, Medianas, Largas) que suman 100%
+
+- Checkbox para habilitar respuestas de audio
+
+- Validaciones en tiempo real
+
+- Indicador visual de paso actual
+
+- Botones "Atrás" y "Guardar"
+
+3. Página de Entrenamiento
+
+- Ruta dinámica: /assistant/[id]
+
+- Información del asistente en header
+
+- Sección de entrenamiento con área de texto para prompts
+
+- Sección de chat simulado con delay de 1-2 segundos
+
+- Indicador "escribiendo..." durante la simulación
+
+- Botón para reiniciar conversación
+
+## Si tuviste que priorizar, qué dejaste fuera y por qué
+
+## Tiempo aproximado de dedicación
+
+- 14 horas
